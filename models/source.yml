@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: test  # Tên dataset trong BigQuery
+    database: dec-k20  # Project ID
+    schema: test  # Dataset name
+    tables:
+      - name: summarysummary  # Tên bảng
+        description: "Bảng chứa dữ liệu checkout"
+        
+      - name: ip_locations # Bảng khác nếu có
+        description: "Bang chua du lieu ip"
+      
+      - name: products
+        description: "bang san pham"
