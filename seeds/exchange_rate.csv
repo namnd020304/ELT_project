@@ -1,0 +1,37 @@
+currency_raw,country_short_code,exchange_rate_to_usd_amount
+€,GLOBAL,1.18
+£,GLOBAL,1.37
+USD $,GLOBAL,1.1
+$,HK,0.13
+$,USD,1.0
+kr,NO,0.1
+kr,DK,0.16
+kr,SE,0.11
+AU $,AU,0.7
+BOB Bs,BO,0.15
+CAD $,CA,0.73
+CHF,CH,1.29
+CLP,CL,0.0012
+COP $,CO,0.00028
+CRC ₡,CR,0.002
+DOP $,DO,0.016
+Ft,HU,0.0031
+GTQ Q,GT,0.13
+HKD $,HK,0.13
+Kč,CZ,0.049
+Lei,MD,0.23
+MXN $,MX,0.12
+NZD $,NZ,0.2
+PEN S/.,PE,0.15
+R$,BR,0.8
+SGD $,SG,1.15
+UYU,UY,0.5
+kn,HR,0.15
+лв.,BG,0.6043
+د.ك.‏,KW,3.25
+₫,VN,0.00004
+₱,PH,0.017
+₲,PY,0.00015
+₹,IN,0.012
+₺,TR,0.023
+￥,JP,0.0063
