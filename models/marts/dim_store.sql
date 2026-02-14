@@ -1,7 +1,6 @@
 {{ config(materialized='table') }}
 
 WITH store_country_mapping AS (
-    -- Tìm country phổ biến nhất cho mỗi store_id từ IP geolocation
     SELECT 
         store_id,
         ip_country_code,
@@ -19,7 +18,6 @@ WITH store_country_mapping AS (
 ),
 
 primary_country_per_store AS (
-    -- Lấy country có nhiều orders nhất cho mỗi store
     SELECT 
         store_id,
         ip_country_code AS country_code,
@@ -30,7 +28,6 @@ primary_country_per_store AS (
 ),
 
 store_with_products AS (
-    -- Lấy store_code từ products
     SELECT DISTINCT
         p.store_code,
         c.store_id
@@ -48,10 +45,7 @@ store_enrichment AS (
         s.country_code,
         s.country,
         s.region,
-        
-        -- Map currency từ country_code
         CASE s.country_code
-            -- Europe - EUR
             WHEN 'AD' THEN 'EUR'
             WHEN 'AT' THEN 'EUR'
             WHEN 'BE' THEN 'EUR'
@@ -75,8 +69,6 @@ store_enrichment AS (
             WHEN 'SK' THEN 'EUR'
             WHEN 'SM' THEN 'EUR'
             WHEN 'VA' THEN 'EUR'
-            
-            -- Europe - Other currencies
             WHEN 'GB' THEN 'GBP'
             WHEN 'CH' THEN 'CHF'
             WHEN 'DK' THEN 'DKK'
@@ -98,8 +90,6 @@ store_enrichment AS (
             WHEN 'AL' THEN 'ALL'
             WHEN 'BA' THEN 'BAM'
             WHEN 'MK' THEN 'MKD'
-            
-            -- North America
             WHEN 'US' THEN 'USD'
             WHEN 'CA' THEN 'CAD'
             WHEN 'MX' THEN 'MXN'
@@ -116,8 +106,6 @@ store_enrichment AS (
             WHEN 'BB' THEN 'BBD'
             WHEN 'BS' THEN 'BSD'
             WHEN 'KY' THEN 'KYD'
-            
-            -- South America
             WHEN 'BR' THEN 'BRL'
             WHEN 'AR' THEN 'ARS'
             WHEN 'CL' THEN 'CLP'
@@ -130,8 +118,6 @@ store_enrichment AS (
             WHEN 'UY' THEN 'UYU'
             WHEN 'GY' THEN 'GYD'
             WHEN 'SR' THEN 'SRD'
-            
-            -- Asia - Middle East
             WHEN 'AE' THEN 'AED'
             WHEN 'SA' THEN 'SAR'
             WHEN 'QA' THEN 'QAR'
@@ -145,8 +131,6 @@ store_enrichment AS (
             WHEN 'YE' THEN 'YER'
             WHEN 'IL' THEN 'ILS'
             WHEN 'PS' THEN 'ILS'
-            
-            -- Asia - East & Southeast
             WHEN 'JP' THEN 'JPY'
             WHEN 'CN' THEN 'CNY'
             WHEN 'KR' THEN 'KRW'
@@ -164,8 +148,6 @@ store_enrichment AS (
             WHEN 'LA' THEN 'LAK'
             WHEN 'MM' THEN 'MMK'
             WHEN 'MN' THEN 'MNT'
-            
-            -- Asia - South
             WHEN 'IN' THEN 'INR'
             WHEN 'PK' THEN 'PKR'
             WHEN 'BD' THEN 'BDT'
@@ -174,8 +156,6 @@ store_enrichment AS (
             WHEN 'BT' THEN 'BTN'
             WHEN 'MV' THEN 'MVR'
             WHEN 'AF' THEN 'AFN'
-            
-            -- Asia - Central
             WHEN 'KZ' THEN 'KZT'
             WHEN 'UZ' THEN 'UZS'
             WHEN 'TM' THEN 'TMT'
@@ -184,8 +164,6 @@ store_enrichment AS (
             WHEN 'AZ' THEN 'AZN'
             WHEN 'AM' THEN 'AMD'
             WHEN 'GE' THEN 'GEL'
-            
-            -- Oceania
             WHEN 'AU' THEN 'AUD'
             WHEN 'NZ' THEN 'NZD'
             WHEN 'FJ' THEN 'FJD'
@@ -193,8 +171,6 @@ store_enrichment AS (
             WHEN 'WS' THEN 'WST'
             WHEN 'TO' THEN 'TOP'
             WHEN 'VU' THEN 'VUV'
-            
-            -- Africa
             WHEN 'ZA' THEN 'ZAR'
             WHEN 'EG' THEN 'EGP'
             WHEN 'NG' THEN 'NGN'
@@ -218,8 +194,6 @@ store_enrichment AS (
             
             ELSE 'USD'  -- Default to USD
         END AS currency_code,
-        
-        -- Currency name
         CASE s.country_code
             WHEN 'US' THEN 'US Dollar'
             WHEN 'GB' THEN 'British Pound'
@@ -254,16 +228,12 @@ store_enrichment AS (
             WHEN 'RU' THEN 'Russian Ruble'
             ELSE 'US Dollar'
         END AS currency_name,
-        
-        -- Store URL
         CASE s.country_code
             WHEN 'US' THEN 'https://www.glamira.com'
             WHEN 'GB' THEN 'https://www.glamira.co.uk'
             WHEN 'AE' THEN 'https://www.glamira.ae'
             ELSE CONCAT('https://www.glamira.', LOWER(s.country_code))
         END AS store_url,
-        
-        -- Language
         CASE s.country_code
             WHEN 'US' THEN 'English'
             WHEN 'GB' THEN 'English'
@@ -324,28 +294,17 @@ store_enrichment AS (
 )
 
 SELECT 
-    -- Surrogate key
     FARM_FINGERPRINT(CONCAT(CAST(store_id AS STRING), store_code)) AS store_sk,
-    
-    -- Store identifiers
     store_id,
     store_code,
-    
-    -- Geographic info
     country_code,
     country,
     region,
-    
-    -- Currency info
     currency_code,
     currency_name,
-    
-    -- Operational info
     language,
     store_url,
     TRUE AS is_active,
-    
-    -- Metadata
     CURRENT_TIMESTAMP() AS created_at,
     CURRENT_TIMESTAMP() AS updated_at
     

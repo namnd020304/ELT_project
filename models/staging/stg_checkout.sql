@@ -26,7 +26,6 @@ WITH source as(
 checkout AS (
     SELECT 
         s.*,
-        -- Join với IP geolocation
         g.country_code AS ip_country_code,
         g.country_name AS ip_country_name,
         g.city AS ip_city,

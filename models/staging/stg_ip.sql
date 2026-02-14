@@ -5,10 +5,7 @@ SELECT
     city,
     region,
     country_short AS country_code,
-    
-    -- Map country name từ country_short (ĐẦY ĐỦ TẤT CẢ COUNTRIES)
     CASE country_short
-        -- Europe
         WHEN 'AD' THEN 'Andorra'
         WHEN 'AL' THEN 'Albania'
         WHEN 'AT' THEN 'Austria'
@@ -61,8 +58,6 @@ SELECT
         WHEN 'SM' THEN 'San Marino'
         WHEN 'UA' THEN 'Ukraine'
         WHEN 'VA' THEN 'Vatican City'
-        
-        -- North America
         WHEN 'AI' THEN 'Anguilla'
         WHEN 'AG' THEN 'Antigua and Barbuda'
         WHEN 'AW' THEN 'Aruba'
@@ -100,8 +95,6 @@ SELECT
         WHEN 'VC' THEN 'Saint Vincent and the Grenadines'
         WHEN 'VG' THEN 'British Virgin Islands'
         WHEN 'VI' THEN 'U.S. Virgin Islands'
-        
-        -- South America
         WHEN 'AR' THEN 'Argentina'
         WHEN 'BO' THEN 'Bolivia'
         WHEN 'BR' THEN 'Brazil'
@@ -115,8 +108,6 @@ SELECT
         WHEN 'SR' THEN 'Suriname'
         WHEN 'UY' THEN 'Uruguay'
         WHEN 'VE' THEN 'Venezuela'
-        
-        -- Asia
         WHEN 'AE' THEN 'United Arab Emirates'
         WHEN 'AF' THEN 'Afghanistan'
         WHEN 'AM' THEN 'Armenia'
@@ -167,8 +158,6 @@ SELECT
         WHEN 'UZ' THEN 'Uzbekistan'
         WHEN 'VN' THEN 'Vietnam'
         WHEN 'YE' THEN 'Yemen'
-        
-        -- Oceania
         WHEN 'AU' THEN 'Australia'
         WHEN 'CK' THEN 'Cook Islands'
         WHEN 'FJ' THEN 'Fiji'
@@ -183,8 +172,6 @@ SELECT
         WHEN 'VU' THEN 'Vanuatu'
         WHEN 'WF' THEN 'Wallis and Futuna'
         WHEN 'WS' THEN 'Samoa'
-        
-        -- Africa
         WHEN 'AO' THEN 'Angola'
         WHEN 'BF' THEN 'Burkina Faso'
         WHEN 'BI' THEN 'Burundi'
@@ -193,7 +180,7 @@ SELECT
         WHEN 'CD' THEN 'Democratic Republic of the Congo'
         WHEN 'CF' THEN 'Central African Republic'
         WHEN 'CG' THEN 'Republic of the Congo'
-        WHEN 'CI' THEN 'Côte d\'Ivoire'
+        WHEN 'CI' THEN 'Côte d'Ivoire'
         WHEN 'CM' THEN 'Cameroon'
         WHEN 'CV' THEN 'Cape Verde'
         WHEN 'DJ' THEN 'Djibouti'
@@ -238,8 +225,6 @@ SELECT
         WHEN 'ZA' THEN 'South Africa'
         WHEN 'ZM' THEN 'Zambia'
         WHEN 'ZW' THEN 'Zimbabwe'
-        
-        -- Special cases
         WHEN '-' THEN 'Unknown'
         WHEN 'IPV6 ADDRESS MISSING IN IPV4 BIN' THEN 'Unknown'
         WHEN 'INVALID IP ADDRESS' THEN 'Unknown'

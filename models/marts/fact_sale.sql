@@ -60,8 +60,6 @@ exchange_rates AS (
 currency_mapping AS (
     SELECT 
         b.*,
-        
-        -- Map currency symbol to standard code
         CASE 
             WHEN b.currency = '€' THEN 'EUR'
             WHEN b.currency = '£' THEN 'GBP'
@@ -113,8 +111,6 @@ currency_mapping AS (
                 END
             ELSE 'USD'
         END AS currency_code,
-        
-        -- Get exchange rate
         COALESCE(er.exchange_rate_to_usd_amount, 1.0) AS exchange_rate
         
     FROM base_checkout b
@@ -126,18 +122,12 @@ currency_mapping AS (
 enriched_facts AS (
     SELECT 
         cm.*,
-        
-        -- Calculate USD amounts
         cm.price * cm.exchange_rate AS revenue_usd,
         cm.price AS revenue_local,
-        
-        -- Join dimension keys
         c.customer_sk,
         d.date_sk AS order_date_sk,
         p.product_sk,
         s.store_sk,
-        
-        -- Location key (consistent với dim_location)
         FARM_FINGERPRINT(CONCAT(
             COALESCE(cm.ip_country_code, ''),
             '|',
@@ -160,7 +150,6 @@ enriched_facts AS (
 )
 
 SELECT 
-    -- Surrogate key (Primary Key)
     FARM_FINGERPRINT(CONCAT(
         CAST(order_id AS STRING),
         '|',
@@ -170,21 +159,15 @@ SELECT
         '|',
         COALESCE(CAST(value_id AS STRING), '')
     )) AS order_item_sk,
-    
-    -- Foreign Keys to Dimensions
     customer_sk,
     order_date_sk,
     product_sk,
     store_sk,
     location_sk,
-    
-    -- Degenerate Dimensions (IDs không có dimension table riêng)
     order_id,
     product_id,
     option_id,
     value_id,
-    
-    -- Time Attributes
     checkout_timestamp,
     checkout_date,
     EXTRACT(YEAR FROM checkout_date) AS checkout_year,
@@ -193,24 +176,16 @@ SELECT
     EXTRACT(DAYOFWEEK FROM checkout_date) AS checkout_day_of_week,
     EXTRACT(HOUR FROM checkout_timestamp) AS checkout_hour,
     local_time,
-    
-    -- Product Customization
     option_label,
     value_label,
-    
-    -- Currency Information
     currency AS currency_symbol,
     currency_code,
     exchange_rate,
-    
-    -- Location Attributes (denormalized for quick filtering)
     ip_country_code,
     ip_country_name,
     ip_city,
     ip_region_name,
     ip_continent,
-    
-    -- Device/Session Attributes
     user_agent,
     resolution,
     CASE 
@@ -221,15 +196,11 @@ SELECT
         WHEN resolution LIKE '%x%' THEN CAST(SPLIT(resolution, 'x')[SAFE_OFFSET(1)] AS INT64)
         ELSE NULL 
     END AS screen_height,
-    
-    -- Device type detection
     CASE 
         WHEN LOWER(user_agent) LIKE '%mobile%' THEN 'Mobile'
         WHEN LOWER(user_agent) LIKE '%tablet%' OR LOWER(user_agent) LIKE '%ipad%' THEN 'Tablet'
         ELSE 'Desktop'
     END AS device_type,
-    
-    -- Browser detection
     CASE 
         WHEN LOWER(user_agent) LIKE '%chrome%' AND LOWER(user_agent) NOT LIKE '%edg%' THEN 'Chrome'
         WHEN LOWER(user_agent) LIKE '%firefox%' THEN 'Firefox'
@@ -238,8 +209,6 @@ SELECT
         WHEN LOWER(user_agent) LIKE '%trident%' OR LOWER(user_agent) LIKE '%msie%' THEN 'IE'
         ELSE 'Other'
     END AS browser,
-    
-    -- OS detection
     CASE 
         WHEN LOWER(user_agent) LIKE '%windows%' THEN 'Windows'
         WHEN LOWER(user_agent) LIKE '%mac%' THEN 'Mac'
@@ -248,12 +217,8 @@ SELECT
         WHEN LOWER(user_agent) LIKE '%linux%' THEN 'Linux'
         ELSE 'Other'
     END AS operating_system,
-    
-    -- URLs
     current_url,
     referrer_url,
-    
-    -- Traffic source analysis
     CASE 
         WHEN referrer_url IS NULL OR referrer_url = '' THEN 'Direct'
         WHEN LOWER(referrer_url) LIKE '%google%' THEN 'Google'
@@ -265,50 +230,26 @@ SELECT
         WHEN LOWER(referrer_url) LIKE '%glamira%' THEN 'Internal'
         ELSE 'Other'
     END AS traffic_source,
-    
-    -- Session attributes
     CASE 
         WHEN show_recommendation = 'true' THEN TRUE 
         ELSE FALSE 
     END AS has_recommendation,
     api_version,
-    
-    -- ===== FACTS (Metrics) =====
-    
-    -- Quantity (mỗi line item = 1 sản phẩm)
     1 AS quantity,
-    
-    -- Revenue in local currency
     revenue_local AS unit_price_local,
     revenue_local AS revenue_local,
-    
-    -- Revenue in USD (standardized)
     revenue_usd AS unit_price_usd,
     revenue_usd AS revenue_usd,
-    
-    -- Cost metrics (placeholder - cần data thực tế)
     NULL AS cost_usd,
     NULL AS gross_profit_usd,
     NULL AS gross_margin_pct,
-    
-    -- ===== FLAGS =====
-    
-    -- Customer type
     user_id_db IS NOT NULL AS is_registered_user,
     user_id_db IS NULL AS is_guest_user,
     email_address IS NOT NULL AND email_address != '' AS has_email,
-    
-    -- Product customization
     option_id IS NOT NULL AS has_customization,
-    
-    -- Transaction flags
     revenue_usd > 0 AS is_revenue_generating,
-    
-    -- ===== METADATA =====
     CURRENT_TIMESTAMP() AS created_at,
     CURRENT_TIMESTAMP() AS updated_at,
-    
-    -- Data quality flags
     CASE 
         WHEN customer_sk IS NULL THEN 'Missing Customer'
         WHEN product_sk IS NULL THEN 'Missing Product'

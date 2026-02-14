@@ -52,7 +52,6 @@ customer_summary AS (
 )
 
 SELECT 
-    -- Surrogate key using FARM_FINGERPRINT
     FARM_FINGERPRINT(customer_key) AS customer_sk,
     
     customer_key,
