@@ -1,10 +1,10 @@
-# 💎 Glamira E-commerce Data Warehouse
+#  Glamira E-commerce Data Warehouse
 
 > Dimensional data warehouse built with **dbt + BigQuery** for jewelry e-commerce analytics
 
 ---
 
-## 📋 Overview
+##  Overview
 
 Star schema data warehouse transforming Glamira's checkout events and product data into analytics-ready tables for BI and reporting across 50+ countries.
 
@@ -54,32 +54,14 @@ Star schema data warehouse transforming Glamira's checkout events and product da
 ##  Quick Start
 
 ```bash
-# Install
 pip install dbt-bigquery
 
-# Configure profiles.yml
-# ~/.dbt/profiles.yml with your BigQuery credentials
-
-# Run
 dbt seed              # Load exchange rates
 dbt run               # Build all models
 dbt test              # Run quality tests
 dbt docs generate     # Generate documentation
 dbt docs serve        # View docs at localhost:8080
 ```
-
----
-
-##  Key Features
-
--  **Incremental loading** - Only process new data (90%+ faster)
--  **Partitioned by date** - Query only relevant dates (50-90% cost reduction)
--  **Clustered** - Optimized for common query patterns
--  **Currency standardization** - All revenue in USD + local currency
--  **Smart denormalization** - Country, device, traffic source pre-parsed
--  **Data quality tracking** - Built-in quality status flags
-
----
 
 ---
 
