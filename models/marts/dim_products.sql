@@ -54,7 +54,7 @@ SELECT
     FARM_FINGERPRINT(product_id)  AS product_sk,
     
     -- Product identifiers
-    product_id,
+    CAST(product_id AS INT64) as product_id, 
     sku,
     
     -- Product attributes
